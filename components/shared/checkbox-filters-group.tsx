@@ -2,18 +2,22 @@
 import React from 'react';
 import { FilterChecboxProps } from './filter-checkbox';
 import { FilterCheckbox } from './filter-checkbox';
-import { Input } from '../ui';
+import { Input, Skeleton } from '../ui';
+
 type Item = FilterChecboxProps;
 
 interface Props {
     title: string;
     items: Item[];
-    defaultItems: Item[];
+    defaultItems?: Item[];
     limit?: number;
+    loading?: boolean;
     searchInputPlaceholder?: string;
-    onChange?: (values: string[]) => void;
+    onClickCheckbox?: (id: string) => void;
     defaultValue?: string[];
     className?: string;
+    selectedId?: Set<string>;
+    name?: string;
 }
 
 export const CheckboxFilterGroup: React.FC<Props> = ({
@@ -22,9 +26,12 @@ export const CheckboxFilterGroup: React.FC<Props> = ({
     defaultItems,
     limit = 5,
     searchInputPlaceholder = 'Find...',
-    onChange,
+    onClickCheckbox,
     defaultValue,
     className,
+    selectedId,
+    loading,
+    name,
 }) => {
     const [showAll, setShowAll] = React.useState(false);
     const [searchValue, setSearchValue] = React.useState('');
@@ -33,11 +40,22 @@ export const CheckboxFilterGroup: React.FC<Props> = ({
         setSearchValue(e.target.value);
     };
 
+    if (loading) {
+        return (
+            <div className={className}>
+                <p className="font-bold mb-3">{title}</p>
+                {...Array(limit)
+                    .fill(0)
+                    .map((_, i) => <Skeleton key={i} className="h-6 mb-4" />)}
+                <Skeleton className="w-28 h-6 mb-4" />
+            </div>
+        );
+    }
     const list = showAll
         ? items.filter((item) =>
               item.text.toLowerCase().includes(searchValue.toLowerCase())
           )
-        : defaultItems.slice(0, limit);
+        : (defaultItems || items).slice(0, limit);
     return (
         <div className={className}>
             <p className="font-bold mb-3">{title}</p>
@@ -55,11 +73,12 @@ export const CheckboxFilterGroup: React.FC<Props> = ({
                 {list.map((item, i) => (
                     <FilterCheckbox
                         key={i}
-                        onCheckedChange={(ids) => console.log(ids)}
-                        checked={false}
+                        onCheckedChange={() => onClickCheckbox?.(item.value)}
+                        checked={selectedId?.has(item.value)}
                         value={item.value}
                         text={item.text}
                         endAdornment={item.endAdornment}
+                        name={name}
                     />
                 ))}
 

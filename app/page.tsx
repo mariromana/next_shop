@@ -3,7 +3,6 @@ import {
     Title,
     TopBar,
     Filters,
-    ProductCard,
     ProductList,
 } from '@/components/shared';
 

@@ -1,10 +1,11 @@
 'use client';
-import { useClickAway } from 'react-use';
+import { useClickAway, useDebounce } from 'react-use';
 import React from 'react';
 import { Search } from 'lucide-react';
 import Link from 'next/link';
 import { cn } from '@/lib/utils';
 import { Api } from '@/services/api-client';
+import { Product } from '@prisma/client';
 interface Props {
     className?: string;
 }
@@ -13,14 +14,29 @@ export const SearchInput: React.FC<Props> = ({ className }) => {
     const [searchQuery, setSearchQuery] = React.useState('');
     const [focused, setFocused] = React.useState(false);
     const ref = React.useRef(null);
-
+    const [products, setProducts] = React.useState<Product[]>([]);
     useClickAway(ref, () => {
         setFocused(false);
     });
 
-    React.useEffect(() => {
-        Api.products.search(searchQuery);
-    }, [searchQuery]);
+    useDebounce(
+        async () => {
+            try {
+                const response = await Api.products.search(searchQuery);
+                setProducts(response);
+            } catch (error) {
+                console.log(error);
+            }
+        },
+        250,
+        [searchQuery]
+    );
+
+    const onClickItem = () => {
+        setFocused(false);
+        setSearchQuery('');
+        setProducts([]);
+    };
 
     return (
         <>
@@ -44,24 +60,30 @@ export const SearchInput: React.FC<Props> = ({ className }) => {
                     onChange={(e) => setSearchQuery(e.target.value)}
                 />
 
-                <div
-                    className={cn(
-                        'absolute w-full bg-white rounded-xl py-2 top-14 shadow-md transition-all duration-200 invisible opacity-0 z-30',
-                        focused && 'visible opacity-100 top-12'
-                    )}
-                >
-                    <Link
-                        href="/product/1"
-                        className="flex items-center gap-5 w-full px-3 py-2 hover:bg-primary/10 cursor-pointer"
+                {products.length > 0 && (
+                    <div
+                        className={cn(
+                            'absolute w-full bg-white rounded-xl py-2 top-14 shadow-md transition-all duration-200 invisible opacity-0 z-30',
+                            focused && 'visible opacity-100 top-12'
+                        )}
                     >
-                        <img
-                            className="rounded-sm h-8 w-8"
-                            src="https://img.freepik.com/free-photo/crispy-mixed-pizza-with-olives-sausage_140725-3095.jpg?t=st=1725438623~exp=1725442223~hmac=94be7e5d82686540377b86ef086734d66e5679473b1b0f4b53c362ff180ece8a&w=1060"
-                            alt="pizza"
-                        />
-                        <span> pizz</span>
-                    </Link>
-                </div>
+                        {products.map((product) => (
+                            <Link
+                                onClick={onClickItem}
+                                key={product.id}
+                                href={`/product/${product.id}`}
+                                className="flex items-center gap-5 w-full px-3 py-2 hover:bg-primary/10 cursor-pointer"
+                            >
+                                <img
+                                    className="rounded-sm h-8 w-8"
+                                    src={product.imageUrl}
+                                    alt={product.name}
+                                />
+                                <span> {product.name}</span>
+                            </Link>
+                        ))}
+                    </div>
+                )}
             </div>
         </>
     );
