@@ -2,13 +2,14 @@
 
 import { ProductWithRelations } from '@/@types/prisma';
 import React from 'react';
-import { Dialog } from '@/shared/components/ui';
-import { DialogContent, DialogTitle } from '@/shared/components/ui/dialog';
-import { ChooseProductForm } from '../choose-product-form';
-import { ChoosePizzaForm } from '../choose-pizza-form';
+import {
+    DialogContent,
+    DialogTitle,
+    Dialog,
+} from '@/shared/components/ui/dialog';
 import { cn } from '@/shared/lib/utils';
 import { useRouter } from 'next/navigation';
-import { useCartStore } from '@/shared/store';
+import { ProductForm } from '../product-form';
 
 interface Props {
     product: ProductWithRelations;
@@ -17,22 +18,7 @@ interface Props {
 
 export const ChooseProductModal: React.FC<Props> = ({ product, className }) => {
     const router = useRouter();
-    const firstItem = product.items[0];
-    const isPizzaForm = Boolean(product.items[0].pizzaType);
-    const addCartItem = useCartStore((state) => state.addCartItem);
 
-    const onAddProduct = () => {
-        addCartItem({
-            productItemId: firstItem.id,
-        });
-    };
-
-    const onAddPizza = (productItemId: number, ingredients: number[]) => {
-        addCartItem({
-            productItemId,
-            ingredients,
-        });
-    };
     return (
         <Dialog open={Boolean(product)} onOpenChange={() => router.back()}>
             <DialogContent
@@ -41,22 +27,7 @@ export const ChooseProductModal: React.FC<Props> = ({ product, className }) => {
                     className
                 )}
             >
-                {isPizzaForm ? (
-                    <ChoosePizzaForm
-                        imageUrl={product.imageUrl}
-                        name={product.name}
-                        ingredients={product.ingredients}
-                        items={product.items}
-                        onSubmit={onAddPizza}
-                    />
-                ) : (
-                    <ChooseProductForm
-                        imageUrl={product.imageUrl}
-                        name={product.name}
-                        onSubmit={onAddProduct}
-                        price={firstItem.price}
-                    />
-                )}
+                <ProductForm product={product} onSubmit={() => router.back()} />
             </DialogContent>
         </Dialog>
     );

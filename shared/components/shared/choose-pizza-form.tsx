@@ -17,6 +17,7 @@ interface Props {
     imageUrl: string;
     ingredients: Ingredient[];
     items: ProductItem[];
+    loading?: boolean;
     onSubmit: (itemId: number, ingredients: number[]) => void;
 }
 export const ChoosePizzaForm: React.FC<Props> = ({
@@ -26,6 +27,7 @@ export const ChoosePizzaForm: React.FC<Props> = ({
     name,
     className,
     onSubmit,
+    loading,
 }) => {
     const {
         size,
@@ -60,7 +62,7 @@ export const ChoosePizzaForm: React.FC<Props> = ({
 
                 <p className="text-gray-400">{textDetails}</p>
 
-                <div className="flex flex-col gap-4 mt-5">
+                <div className="flex flex-col gap-4 mt-3">
                     <SelectVariants
                         items={availableSizes}
                         value={String(size)}
@@ -73,7 +75,7 @@ export const ChoosePizzaForm: React.FC<Props> = ({
                     />
                 </div>
 
-                <div className="bg-gray-50 p-5 rounded-md h-[420px] overflow-auto scrollbar mt-5">
+                <div className="bg-gray-50 p-5 rounded-md h-[420px] overflow-auto scrollbar mt-1">
                     <div className="grid grid-cols-3 gap-3">
                         {ingredients.map((ingredient) => (
                             <IngredientItem
@@ -87,10 +89,10 @@ export const ChoosePizzaForm: React.FC<Props> = ({
                         ))}
                     </div>
                 </div>
-
                 <Button
+                    loading={loading}
                     onClick={handleClickAdd}
-                    className="h-[55px] px-10 text-base rounded-[18px] w-full mt-10"
+                    className="h-[55px] px-10 text-base rounded-[18px] w-full mt-2"
                 >
                     Add to cart {totalPrice}
                 </Button>

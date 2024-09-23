@@ -62,6 +62,7 @@ export async function POST(req: NextRequest) {
                             in: data.ingredients,
                         },
                     },
+                    some: {},
                 },
             },
         });

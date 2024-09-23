@@ -7,6 +7,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { SearchInput } from './search-input';
 import { CartButton } from './cart-button';
+
 interface Props {
     className?: string;
 }
