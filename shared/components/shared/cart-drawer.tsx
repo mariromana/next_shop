@@ -21,34 +21,14 @@ import { useCartStore } from '@/shared/store';
 import { PizzaSize, PizzaType } from '@/shared/constants/pizza';
 import { Title } from './title';
 import emptybox from '../../../public/assets/images/empty-box.png';
-import clsx from 'clsx';
+
 import { cn } from '@/shared/lib/utils';
+import { useCart } from '@/shared/hooks';
 
-interface Props {
-    className?: string;
-}
-
-export const CartDrawer: React.FC<React.PropsWithChildren<Props>> = ({
-    children,
-    className,
-}) => {
-    const [
-        fetchCartItems,
-        totalAmount,
-        items,
-        updateItemQuantity,
-        removeCartItem,
-    ] = useCartStore((state) => [
-        state.fetchCartItems,
-        state.totalAmount,
-        state.items,
-        state.updateItemQuantity,
-        state.removeCartItem,
-    ]);
-
-    useEffect(() => {
-        fetchCartItems();
-    }, []);
+export const CartDrawer: React.FC<React.PropsWithChildren> = ({ children }) => {
+    const { totalAmount, items, updateItemQuantity, removeCartItem } =
+        useCart();
+    const [redirect, setRedirect] = React.useState(false);
 
     const onClickCountButton = (
         id: number,
@@ -151,12 +131,14 @@ export const CartDrawer: React.FC<React.PropsWithChildren<Props>> = ({
                                         </span>
 
                                         <span className="font-bold text-lg">
-                                            {totalAmount}
+                                            {totalAmount} $
                                         </span>
                                     </div>
 
-                                    <Link href="/cart">
+                                    <Link href="/checkout">
                                         <Button
+                                            onClick={() => setRedirect(true)}
+                                            loading={redirect}
                                             type="submit"
                                             className="w-full h-12 text-base"
                                         >

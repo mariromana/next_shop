@@ -14,7 +14,7 @@ export const CartItemInfo: React.FC<Props> = ({ name, details, className }) => {
             </div>
 
             {details.length > 0 && (
-                <div className="text-xs text-gray-400">{details}</div>
+                <div className="text-xs text-gray-400 w-[90%]">{details}</div>
             )}
         </div>
     );
