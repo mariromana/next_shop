@@ -4,6 +4,7 @@ import { CartItemOrder } from '../cart-item-order';
 import { getCartItemDetails } from '@/shared/lib';
 import { PizzaSize, PizzaType } from '@/shared/constants/pizza';
 import { CartStateItem } from '@/shared/lib/get-cart-details';
+import { CartItemSkeleton } from '../cart-item-skeleton';
 
 interface Props {
     className?: string;
@@ -14,6 +15,7 @@ interface Props {
         type: 'plus' | 'minus'
     ) => void;
     removeCartItem: (id: number) => void;
+    loading?: boolean;
 }
 
 export const CheckoutCart: React.FC<Props> = ({
@@ -21,34 +23,43 @@ export const CheckoutCart: React.FC<Props> = ({
     items,
     onClickCountButton,
     removeCartItem,
+    loading,
 }) => {
     return (
         <WhiteBlock title="1. Cart" className={className}>
             <div className="flex flex-col gap-5">
-                {items.map((item) => (
-                    <CartItemOrder
-                        id={item.id}
-                        name={item.name}
-                        key={item.id}
-                        details={
-                            item.pizzaSize && item.pizzaType
-                                ? getCartItemDetails(
-                                      item.ingredients,
-                                      item.pizzaType as PizzaType,
-                                      item.pizzaSize as PizzaSize
+                {loading
+                    ? [...Array(4)].map((_, index) => (
+                          <CartItemSkeleton key={index} />
+                      ))
+                    : items.map((item) => (
+                          <CartItemOrder
+                              id={item.id}
+                              name={item.name}
+                              key={item.id}
+                              details={
+                                  item.pizzaSize && item.pizzaType
+                                      ? getCartItemDetails(
+                                            item.ingredients,
+                                            item.pizzaType as PizzaType,
+                                            item.pizzaSize as PizzaSize
+                                        )
+                                      : ''
+                              }
+                              disabled={item.disabled}
+                              price={item.price}
+                              quantity={item.quantity}
+                              imageUrl={item.imageUrl}
+                              onClickCountButton={(type) =>
+                                  onClickCountButton(
+                                      item.id,
+                                      item.quantity,
+                                      type
                                   )
-                                : ''
-                        }
-                        disabled={item.disabled}
-                        price={item.price}
-                        quantity={item.quantity}
-                        imageUrl={item.imageUrl}
-                        onClickCountButton={(type) =>
-                            onClickCountButton(item.id, item.quantity, type)
-                        }
-                        onClickRemove={() => removeCartItem(item.id)}
-                    />
-                ))}
+                              }
+                              onClickRemove={() => removeCartItem(item.id)}
+                          />
+                      ))}
             </div>
         </WhiteBlock>
     );

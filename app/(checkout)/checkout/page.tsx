@@ -12,8 +12,12 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { useCart } from '@/shared/hooks';
 import { TCheckoutFormValues, checkoutFormSchema } from '@/shared/constants';
 import { cn } from '@/shared/lib/utils';
+import { createOrder } from '@/app/actions';
+import toast from 'react-hot-toast';
+import React from 'react';
 
 export default function CheckoutPage() {
+    const [submiting, setSubmiting] = React.useState(false);
     const { totalAmount, items, updateItemQuantity, removeCartItem, loading } =
         useCart();
 
@@ -38,8 +42,28 @@ export default function CheckoutPage() {
         updateItemQuantity(id, newQuantity);
     };
 
-    const onSubmit = (data: TCheckoutFormValues) => {
-        console.log(data);
+    const onSubmit = async (data: TCheckoutFormValues) => {
+        try {
+            setSubmiting(true);
+            const url = await createOrder(data);
+
+            toast.success(
+                'Order created successfully! Redirecting for payment...',
+                {
+                    icon: '🚀',
+                }
+            );
+
+            if (url) {
+                location.href = url;
+            }
+        } catch (error) {
+            console.log(error);
+            setSubmiting(false);
+            toast.error('Failed to create order', {
+                icon: '🚨',
+            });
+        }
     };
 
     return (
@@ -54,6 +78,7 @@ export default function CheckoutPage() {
                                 items={items}
                                 onClickCountButton={onClickCountButton}
                                 removeCartItem={removeCartItem}
+                                loading={loading}
                             />
                             <CheckoutPersonalForm
                                 className={cn({
@@ -70,7 +95,7 @@ export default function CheckoutPage() {
                         <div className="w-[450px]">
                             <CheckoutSidebar
                                 totalAmount={totalAmount}
-                                loading={loading}
+                                loading={loading || submiting}
                             />
                         </div>
                     </div>
