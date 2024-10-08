@@ -25,7 +25,7 @@ model User {
     orders Order[]
 
     verificationCode VerificationCode?
-    verified DateTime
+    verified DateTime?
 
     createdAt  DateTime @default(now())
     updatedAt DateTime @updatedAt
