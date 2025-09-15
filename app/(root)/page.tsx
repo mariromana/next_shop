@@ -4,6 +4,7 @@ import {
     TopBar,
     Filters,
     ProductList,
+    Stories,
 } from '@/shared/components/shared';
 import { prisma } from '@/prisma/prisma-client';
 import { Suspense } from 'react';
@@ -27,7 +28,7 @@ export default async function Home({
                     (elem) => elem.products.length > 0
                 )}
             />
-
+            <Stories />
             <Container className="mt-10 pb-14">
                 <div className="flex gap-[80px] ">
                     <div className="w-[250px]">
