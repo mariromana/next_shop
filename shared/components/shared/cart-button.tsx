@@ -6,16 +6,11 @@ import { cn } from '@/shared/lib/utils';
 import { CartDrawer } from './cart-drawer';
 import { useCartStore } from '@/shared/store';
 
-interface Props {
-    className?: string;
-}
+export const CartButton: React.FC<{ className?: string }> = ({ className }) => {
+    const totalAmount = useCartStore((s) => s.totalAmount);
+    const itemsCount = useCartStore((s) => s.items.length);
+    const loading = useCartStore((s) => s.loading);
 
-export const CartButton: React.FC<Props> = ({ className }) => {
-    const [totalAmount, items, loading] = useCartStore((state) => [
-        state.totalAmount,
-        state.items,
-        state.loading,
-    ]);
     return (
         <CartDrawer>
             <Button
@@ -27,16 +22,14 @@ export const CartButton: React.FC<Props> = ({ className }) => {
                 )}
             >
                 <b>{totalAmount} $</b>
-
                 <span className="h-full w-[1px] bg-white/30 mx-3" />
-
                 <div className="flex items-center gap-1 transition duration-300 group-hover:opacity-0">
                     <ShoppingCart
                         size={16}
                         className="relative"
                         strokeWidth={2}
                     />
-                    <b>{items.length}</b>
+                    <b>{itemsCount}</b>
                 </div>
                 <ArrowRight
                     size={20}

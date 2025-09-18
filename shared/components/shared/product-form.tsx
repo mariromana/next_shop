@@ -8,16 +8,12 @@ import { ChooseProductForm } from './choose-product-form';
 
 interface Props {
     product: ProductWithRelations;
-
     onSubmit?: VoidFunction;
 }
 
 export const ProductForm = ({ onSubmit: _onSubmit, product }: Props) => {
-    const [addCartItem, loading] = useCartStore((state) => [
-        state.addCartItem,
-        state.loading,
-    ]);
-
+    const addCartItem = useCartStore((s) => s.addCartItem);
+    const loading = useCartStore((s) => s.loading);
     const firstItem = product.items[0];
     const isPizzaForm = Boolean(product.items[0].pizzaType);
     const onSubmit = async (productItemId?: number, ingredients?: number[]) => {
