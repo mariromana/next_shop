@@ -3,6 +3,9 @@ import { Container, Title } from '@/shared/components/shared';
 import { useRouter } from 'next/navigation';
 import { Button } from '@/shared/components';
 
+export const dynamic = 'force-dynamic';
+// export const revalidate = false;
+// export const runtime = 'nodejs';
 export default function PaymentPage() {
     const router = useRouter();
 

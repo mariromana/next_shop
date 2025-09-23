@@ -20,6 +20,9 @@ import { Api } from '@/shared/services/api-client';
 import { useSession } from 'next-auth/react';
 import { redirect } from 'next/dist/server/api-utils';
 
+export const dynamic = 'force-dynamic';
+// export const revalidate = false;
+// export const runtime = 'nodejs';
 export default function CheckoutPage() {
     const [submitting, setSubmitting] = React.useState(false);
     const { totalAmount, updateItemQuantity, items, removeCartItem, loading } =

@@ -5,8 +5,8 @@ import { prisma } from '@/prisma/prisma-client';
 import { ProfileForm } from '@/shared/components';
 
 export const dynamic = 'force-dynamic';
-export const revalidate = 0;
-export const runtime = 'nodejs';
+// export const revalidate = false;
+// export const runtime = 'nodejs';
 export default async function ProfilePage() {
     const session = await getUserSession();
 
