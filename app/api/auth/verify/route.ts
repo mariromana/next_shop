@@ -1,6 +1,10 @@
 import { prisma } from '@/prisma/prisma-client';
 import { NextRequest, NextResponse } from 'next/server';
 
+export const dynamic = 'force-dynamic';
+export const revalidate = 0;
+export const runtime = 'nodejs';
+
 export async function GET(req: NextRequest) {
     try {
         const code = req.nextUrl.searchParams.get('code');
@@ -41,4 +45,7 @@ export async function GET(req: NextRequest) {
         console.log(error);
         console.log('Error [Verify_GET]', error);
     }
+}
+export async function POST() {
+    return NextResponse.json({ error: 'Method Not Allowed' }, { status: 405 });
 }
